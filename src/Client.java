@@ -161,21 +161,22 @@ class SmartCardActions extends Template {
 //    }
 
 
-    public boolean verifyPIN() {
+    public void verifyPIN() {
         if(1234 == 1234){
             System.out.println("Your pin is verified ");
-            return true ;
+         //   return true ;
         }else{
             System.out.println("Your pin is rejected from system...");
-            return  false ;
+          //  return  false ;
         }
     }
     protected void selectFile() {
-        if(verifyPIN())
-            System.out.println("File is selected...");
-        else{
-            System.out.println("File couldn't select");
-        }
+        System.out.println("File is selected");
+////        if(verifyPIN())
+////            System.out.println("File is selected...");
+////        else{
+////            System.out.println("File couldn't select");
+//        }
     }
     //    protected void encryptData() {
 //
