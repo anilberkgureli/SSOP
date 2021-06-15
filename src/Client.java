@@ -122,26 +122,21 @@ class OSToSmartCardAdapter implements OS{
 abstract class Template{
 
     public void ReadActions(){
-//        verifyPIN();
-//        openFile();
+
         selectFile();
         readData();
         decryptData();
-        //closeFile();
+
     }
     public void WriteActions(){
-//         openFile();
-//         verifyPIN();
+
         selectFile();
         encryptData();
         writeData();
-        //  decryptData();
-
 
     }
 
-    //  protected  abstract void openFile();
-    //  protected  abstract boolean verifyPIN();
+
     protected  abstract void selectFile();
     protected  final void encryptData(){
         System.out.println("Encrypting...");
@@ -151,16 +146,12 @@ abstract class Template{
     protected  final void decryptData(){
         System.out.println("Decrypting...");
     }
-//    protected  abstract void closeFile();
 
 }
 
 class SmartCardActions extends Template {
 
-    //    @Override
-//    public void openFile() {
-//        hook();
-//    }
+
     public boolean enterPIN(){
         if(1234==1234)
             return true;
@@ -185,14 +176,7 @@ class SmartCardActions extends Template {
             System.out.println("File couldn't select");
         }
     }
-    //    protected void encryptData() {
-//
-////        if(verifyPIN() )
-////            System.out.println("Data is encrypted");
-////        else {
-////            System.out.println("Data couldn't select");
-////        }
-    //}
+
     protected void readData() {
         System.out.println("Data is reading***");
     }
@@ -204,26 +188,6 @@ class SmartCardActions extends Template {
         System.out.println("****************\n\n");
     }
 
-
-
-//    protected void decryptData() {
-//        System.out.println("Decrypting....");
-////        if(verifyPIN())
-////            System.out.println("Decrypting...");
-////        else{
-////            System.out.println("....");
-////        }
-//    }
-
-    //   @Override
-    //   protected void closeFile() {
-//        hook();
-    //   }
-
-//    protected void hook(){
-//        //Boş dönmesi için
-//        System.out.println();
-//    }
 }
 
 class USBActions extends Template {
