@@ -251,6 +251,7 @@ class USBActions extends Template {
 class Access implements Open{
 
     // Hem usb hem de smart cardın çalıştırıldığı yer
+    Scanner scanner = new Scanner(System.in);
 
     public Access() {
         usbActions = new USBActions();
@@ -262,15 +263,19 @@ class Access implements Open{
     }
     @Override
     public void openUsbStickToken() {
-        usbStick.cardInsertion();
-        usbStick.openFile();
-        sockets.add(usbStick);
-
-        usbStick.readingProcess();
-        usbStick.closeFile();
-
-        usbStick.writingProcess();
-        usbStick.closeFile();
+        System.out.println("If you want to use token press 1 or add new information press 2");
+        int a = scanner.nextInt();
+        if(a==1){
+            usbStick.cardInsertion();
+            usbStick.openFile();
+            sockets.add(usbStick);
+            usbStick.readingProcess();
+        }
+        else if(a==2){
+            usbStick.cardInsertion();
+            usbStick.writingProcess();
+            usbStick.closeFile();
+        }
 
     }
     @Override
