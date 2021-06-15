@@ -66,9 +66,7 @@ class SmartCard {
     public void cardInsertion() {
 
         connector = true ;
-        // System.out.println("Smart Card is connected");
-        // System.out.println("------------------------");
-        // System.out.println();
+
         AbstractReaderFactory SmartCard = new SmartCardReader("SmartCard is inserted");
         adapter2.createReader(SmartCard);
         System.out.println("Using port number is "+ buildReader.x.size());
@@ -249,7 +247,7 @@ class Access implements Open{
     @Override
     public void openSmartCardToken() {
 
-        //sockets.add(smartCard);
+
         System.out.println("If you want to use token press 1 or add new information press 2");
         int a = scanner.nextInt();
         if(a==1) {
