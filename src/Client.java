@@ -36,7 +36,7 @@ class USBStick implements OS {
     @Override
     public void writingProcess() {
         if(connector){
-            System.out.println("Data is writing...");
+            System.out.println("Writing process is working for USB stick");
             System.out.println("Your data is wrote on your USB Card");
             usbActions.WriteActions();
         }else{
@@ -47,7 +47,7 @@ class USBStick implements OS {
     @Override
     public void readingProcess() {
         if(connector){
-            System.out.println("Data is reading...");
+            System.out.println("Reading process is working for USB stick");
             System.out.println("Your data is read on your USB Card");
             usbActions.ReadActions();
         }else{
@@ -122,7 +122,7 @@ abstract class Template{
     public void ReadActions(){
 //        verifyPIN();
 //        openFile();
-        selectFile();
+        //selectFile();
         readData();
         decryptData();
         //closeFile();
@@ -130,7 +130,7 @@ abstract class Template{
     public void WriteActions(){
 //         openFile();
 //         verifyPIN();
-        selectFile();
+      //  selectFile();
         encryptData();
         writeData();
         //  decryptData();
@@ -140,7 +140,7 @@ abstract class Template{
 
     //  protected  abstract void openFile();
     //  protected  abstract boolean verifyPIN();
-    protected  abstract void selectFile();
+    //protected  abstract void selectFile();
     protected  final void encryptData(){
         System.out.println("Encrypting...");
     }
@@ -265,7 +265,10 @@ class Access implements Open{
         usbStick.cardInsertion();
         usbStick.openFile();
         sockets.add(usbStick);
+
         usbStick.readingProcess();
+        usbStick.closeFile();
+
         usbStick.writingProcess();
         usbStick.closeFile();
 
@@ -276,6 +279,8 @@ class Access implements Open{
         smartCardActions.verifyPIN();
         sockets.add(smartCard);
         smartCard.readingProcess();
+        smartCard.cardInsertion();
+        smartCardActions.verifyPIN();
         smartCard.writingProcess();
     }
 
