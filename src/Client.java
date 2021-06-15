@@ -12,7 +12,7 @@ interface OS{
 }
 
 class USBStick implements OS {
-
+    buildAdapter adapter = new buildAdapter();
     private boolean connector = false ; //connectionun bağlı veya değil olduğunu tespit için
     private USBActions usbActions ;
 
@@ -30,13 +30,14 @@ class USBStick implements OS {
     @Override
     public void cardInsertion() {
         connector = true  ;
-        System.out.println("USB Stick is connected");
+        AbstractAdapterFactory UsbToken = new UsbTokenAdapter("UsbToken is insterted");
+        adapter.createAdapter(UsbToken);
     }
 
     @Override
     public void writingProcess() {
         if(connector){
-            System.out.println("Writing process is working for USB stick");
+            System.out.println("Data is writing...");
             System.out.println("Your data is wrote on your USB Card");
             usbActions.WriteActions();
         }else{
@@ -47,7 +48,7 @@ class USBStick implements OS {
     @Override
     public void readingProcess() {
         if(connector){
-            System.out.println("Reading process is working for USB stick");
+            System.out.println("Data is reading...");
             System.out.println("Your data is read on your USB Card");
             usbActions.ReadActions();
         }else{
@@ -66,10 +67,13 @@ class SmartCard {
     private boolean connector = false ;
 
     public void cardInsertion() {
+        buildAdapter adapter = new buildAdapter();
         connector = true ;
-        System.out.println("Smart Card is connected");
-        System.out.println("------------------------");
-        System.out.println();
+        // System.out.println("Smart Card is connected");
+        // System.out.println("------------------------");
+        // System.out.println();
+        AbstractAdapterFactory SmartCard = new SmartCardAdapter("SmartCard is inserted");
+        adapter.createAdapter(SmartCard);
     }
 
     public void smartCardWriting() {
@@ -122,7 +126,7 @@ abstract class Template{
     public void ReadActions(){
 //        verifyPIN();
 //        openFile();
-        //selectFile();
+        selectFile();
         readData();
         decryptData();
         //closeFile();
@@ -130,7 +134,7 @@ abstract class Template{
     public void WriteActions(){
 //         openFile();
 //         verifyPIN();
-      //  selectFile();
+        selectFile();
         encryptData();
         writeData();
         //  decryptData();
@@ -140,7 +144,7 @@ abstract class Template{
 
     //  protected  abstract void openFile();
     //  protected  abstract boolean verifyPIN();
-    //protected  abstract void selectFile();
+    protected  abstract void selectFile();
     protected  final void encryptData(){
         System.out.println("Encrypting...");
     }
@@ -155,28 +159,33 @@ abstract class Template{
 
 class SmartCardActions extends Template {
 
-//    @Override
+    //    @Override
 //    public void openFile() {
 //        hook();
 //    }
+    public boolean enterPIN(){
+        if(1234==1234)
+            return true;
+        else
+            return false;
+    }
 
 
     public void verifyPIN() {
-        if(1234 == 1234){
+        if(enterPIN()){
             System.out.println("Your pin is verified ");
-         //   return true ;
+
         }else{
             System.out.println("Your pin is rejected from system...");
-          //  return  false ;
+
         }
     }
     protected void selectFile() {
-        System.out.println("File is selected");
-////        if(verifyPIN())
-////            System.out.println("File is selected...");
-////        else{
-////            System.out.println("File couldn't select");
-//        }
+        if(enterPIN())
+            System.out.println("File is selected...");
+        else{
+            System.out.println("File couldn't select");
+        }
     }
     //    protected void encryptData() {
 //
@@ -249,11 +258,13 @@ class USBActions extends Template {
 
 }
 class Access implements Open{
-
-    // Hem usb hem de smart cardın çalıştırıldığı yer
     Scanner scanner = new Scanner(System.in);
 
+    // Hem usb hem de smart cardın çalıştırıldığı yer
+
+
     public Access() {
+
         usbActions = new USBActions();
         usbStick = new USBStick(usbActions);
 
@@ -277,15 +288,16 @@ class Access implements Open{
             usbStick.closeFile();
         }
 
+
     }
     @Override
     public void openSmartCardToken() {
+
+
         smartCard.cardInsertion();
         smartCardActions.verifyPIN();
         sockets.add(smartCard);
         smartCard.readingProcess();
-        smartCard.cardInsertion();
-        smartCardActions.verifyPIN();
         smartCard.writingProcess();
     }
 
@@ -313,10 +325,52 @@ class Singleton extends Access{
         return instance;
     }
 }
+abstract  class AbstractAdapterFactory{
+    abstract String cardInsertion();
+
+}
+class SmartCardAdapter extends AbstractAdapterFactory{
+    String a;
+    @Override
+    String cardInsertion() {
+        return a;
+    }
+    public SmartCardAdapter(String instertion){
+        a = instertion;
+
+
+    }
+}
+class UsbTokenAdapter extends AbstractAdapterFactory{
+    String a;
+    @Override
+    String cardInsertion() {
+        return a;
+    }
+    public UsbTokenAdapter(String instertion){
+        a = instertion;
+
+
+    }
+}
+class buildAdapter{
+    public void createAdapter(AbstractAdapterFactory adapterFactory){
+        ArrayList<AbstractAdapterFactory> x = new ArrayList<>(4);
+        x.add(adapterFactory);
+        System.out.println(adapterFactory.cardInsertion());
+
+    }
+}
+
 
 
 public class Client {
     public static void main(String [] args){
+
+        // AbstractAdapterFactory SmartCard = new SmartCardAdapter("SmartCard is inserted");
+
+        //adapter.createAdapter(SmartCard);
+
         Singleton singleton = Singleton.getInstance();
 
 
@@ -360,4 +414,7 @@ public class Client {
 //asdasdasdasdasdas
         //COMMİT TEST
     }
+
+
+
 }
