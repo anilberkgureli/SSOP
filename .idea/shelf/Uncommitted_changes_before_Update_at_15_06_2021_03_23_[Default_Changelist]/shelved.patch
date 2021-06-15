@@ -1,0 +1,169 @@
+Index: src/Client.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>import java.util.ArrayList;\r\nimport java.util.Scanner;\r\n\r\ninterface Open{\r\n    void openUsbStickToken();\r\n    void openSmartCardToken();\r\n}\r\ninterface OS{\r\n    void cardInsertion();\r\n    void writingProcess();\r\n    void readingProcess();\r\n}\r\n\r\nclass USBStick implements OS {\r\n\r\n    private boolean connector = false ; //connectionun bağlı veya değil olduğunu tespit için\r\n    private USBActions usbActions ;\r\n\r\n    public USBStick(USBActions usbActions) {\r\n        this.usbActions = usbActions;\r\n    }\r\n\r\n    public void openFile(){\r\n        System.out.println(\"File has been opened\");\r\n    }\r\n\r\n    public void closeFile() {\r\n        System.out.println(\"File has been closed\");\r\n    }\r\n    @Override\r\n    public void cardInsertion() {\r\n        connector = true  ;\r\n        System.out.println(\"USB Stick is connected\");\r\n    }\r\n\r\n    @Override\r\n    public void writingProcess() {\r\n        if(connector){\r\n            System.out.println(\"Data is writing...\");\r\n            System.out.println(\"Your data is wrote on your USB Card\");\r\n            usbActions.WriteActions();\r\n        }else{\r\n            System.out.println(\"Please connect your USB Stick\");\r\n        }\r\n    }\r\n\r\n    @Override\r\n    public void readingProcess() {\r\n        if(connector){\r\n            System.out.println(\"Data is reading...\");\r\n            System.out.println(\"Your data is read on your USB Card\");\r\n            usbActions.ReadActions();\r\n        }else{\r\n            System.out.println(\"Please connect your USB Stick\");\r\n        }\r\n    }\r\n\r\n}\r\nclass SmartCard {\r\n    private final SmartCardActions smartCardActions ;\r\n\r\n    public SmartCard(SmartCardActions smartCardActions) {\r\n        this.smartCardActions = smartCardActions;\r\n    }\r\n\r\n    private boolean connector = false ;\r\n\r\n    public void cardInsertion() {\r\n        connector = true ;\r\n        System.out.println(\"Smart Card is connected\");\r\n        System.out.println(\"------------------------\");\r\n        System.out.println();\r\n    }\r\n\r\n    public void smartCardWriting() {\r\n        if(connector){\r\n            System.out.println(\"Writing proces is working for Smart Card\");\r\n            System.out.println(\"---------------------------------\");\r\n            System.out.println(\"Your data is wrote on your Smart Card\");\r\n            smartCardActions.WriteActions();\r\n        }else {\r\n            System.out.println(\"Please connect your smart card\");\r\n        }\r\n    }\r\n\r\n    public void smartCardReading() {\r\n        if(connector){\r\n            System.out.println(\"Reading process is working for Smart Card\");\r\n            System.out.println(\"----------------------------------\");\r\n            smartCardActions.ReadActions();\r\n        }else {\r\n            System.out.println(\"Please connect your smart card\");\r\n        }\r\n    }\r\n}\r\n\r\nclass OSToSmartCardAdapter implements OS{\r\n    private final SmartCard smartCard ;\r\n\r\n    public OSToSmartCardAdapter(SmartCard smartCard) {\r\n        this.smartCard = smartCard ;\r\n    }\r\n\r\n    @Override\r\n    public void cardInsertion() {\r\n        smartCard.cardInsertion();\r\n    }\r\n    @Override\r\n    public void writingProcess() {\r\n        smartCard.smartCardWriting();\r\n    }\r\n    @Override\r\n    public void readingProcess() {\r\n        smartCard.smartCardReading();\r\n    }\r\n}\r\n\r\n//Template pattern starts below\r\n\r\nabstract class Template{\r\n\r\n    public void ReadActions(){\r\n//        verifyPIN();\r\n//        openFile();\r\n        selectFile();\r\n        readData();\r\n        decryptData();\r\n        //closeFile();\r\n    }\r\n    public void WriteActions(){\r\n//         openFile();\r\n//         verifyPIN();\r\n        selectFile();\r\n        encryptData();\r\n        writeData();\r\n        //  decryptData();\r\n\r\n\r\n    }\r\n\r\n    //  protected  abstract void openFile();\r\n    //  protected  abstract boolean verifyPIN();\r\n    protected  abstract void selectFile();\r\n    protected  final void encryptData(){\r\n        System.out.println(\"Encrypting...\");\r\n    }\r\n    protected  abstract void readData();\r\n    protected abstract void writeData();\r\n    protected  final void decryptData(){\r\n        System.out.println(\"Decrypting...\");\r\n    }\r\n    protected  abstract void closeFile();\r\n\r\n}\r\n\r\nclass SmartCardActions extends Template {\r\n\r\n//    @Override\r\n//    public void openFile() {\r\n//        hook();\r\n//    }\r\n\r\n\r\n    public boolean verifyPIN() {\r\n        if(1234 == 1234){\r\n            System.out.println(\"Your pin is verified \");\r\n            return true ;\r\n        }else{\r\n            System.out.println(\"Your pin is rejected from system...\");\r\n            return  false ;\r\n        }\r\n    }\r\n    protected void selectFile() {\r\n        if(verifyPIN())\r\n            System.out.println(\"File is selected...\");\r\n        else{\r\n            System.out.println(\"File couldn't select\");\r\n        }\r\n    }\r\n    //    protected void encryptData() {\r\n//\r\n////        if(verifyPIN() )\r\n////            System.out.println(\"Data is encrypted\");\r\n////        else {\r\n////            System.out.println(\"Data couldn't select\");\r\n////        }\r\n    //}\r\n    protected void readData() {\r\n        System.out.println(\"Data is reading***\");\r\n    }\r\n\r\n    protected void writeData(){\r\n        System.out.println(\"Data is writing***\");\r\n    }\r\n\r\n\r\n\r\n//    protected void decryptData() {\r\n//        System.out.println(\"Decrypting....\");\r\n////        if(verifyPIN())\r\n////            System.out.println(\"Decrypting...\");\r\n////        else{\r\n////            System.out.println(\"....\");\r\n////        }\r\n//    }\r\n\r\n    @Override\r\n    protected void closeFile() {\r\n//        hook();\r\n    }\r\n\r\n//    protected void hook(){\r\n//        //Boş dönmesi için\r\n//        System.out.println();\r\n//    }\r\n}\r\n\r\nclass USBActions extends Template {\r\n\r\n    //  //  @Override\r\n//    public void openFile() {\r\n//        System.out.println(\"File is opened\");\r\n//    }\r\n//    public boolean verifyPIN(){\r\n//        hook();\r\n//        return true ;\r\n//    }\r\n    protected void selectFile() {\r\n        System.out.println(\"File is selected...\");\r\n    }\r\n    //    protected void encryptData() {\r\n//        System.out.println(\"Data is encrypted\");\r\n//    }\r\n    protected void readData() {\r\n        hook();\r\n    }\r\n    protected void writeData(){\r\n        hook();\r\n    }\r\n    //    protected void decryptData() {\r\n//        System.out.println(\"Decrypting...\");\r\n//    }\r\n    protected void closeFile() {\r\n        System.out.println(\"File is closed\");\r\n    }\r\n\r\n    protected void hook(){}\r\n\r\n}\r\nclass Access implements Open{\r\n\r\n    // Hem usb hem de smart cardın çalıştırıldığı yer\r\n\r\n    public Access() {\r\n        usbActions = new USBActions();\r\n        usbStick = new USBStick(usbActions);\r\n\r\n        smartCardActions = new SmartCardActions();\r\n        smartCARD = new SmartCard(smartCardActions);\r\n        smartCard = new OSToSmartCardAdapter(smartCARD);\r\n    }\r\n    @Override\r\n    public void openUsbStickToken() {\r\n        usbStick.cardInsertion();\r\n        usbStick.openFile();\r\n        sockets.add(usbStick);\r\n        usbStick.readingProcess();\r\n        usbStick.writingProcess();\r\n        usbStick.closeFile();\r\n\r\n    }\r\n    @Override\r\n    public void openSmartCardToken() {\r\n        smartCard.cardInsertion();\r\n        smartCardActions.verifyPIN();\r\n        sockets.add(smartCard);\r\n        smartCard.readingProcess();\r\n        smartCard.writingProcess();\r\n    }\r\n\r\n\r\n    private USBStick usbStick ;\r\n    private USBActions usbActions;\r\n    private SmartCard smartCARD ;\r\n    private OSToSmartCardAdapter smartCard ;\r\n    private SmartCardActions smartCardActions;\r\n\r\n    ArrayList <OS> sockets = new ArrayList<OS>(4);\r\n}\r\n\r\nclass Singleton extends Access{\r\n\r\n    private static Singleton instance;\r\n\r\n    private Singleton(){}\r\n\r\n    public static Singleton getInstance(){\r\n\r\n        if (instance == null){\r\n            instance = new Singleton();\r\n        }\r\n        return instance;\r\n    }\r\n}\r\n\r\n\r\npublic class Client {\r\n    public static void main(String [] args){\r\n        Singleton singleton = Singleton.getInstance();\r\n\r\n\r\n        Scanner scan = new Scanner(System.in); //Scanner for user input\r\n\r\n        System.out.println(\"Please choose your insertion\");\r\n        System.out.println(\"1 Smart Card\");\r\n        System.out.println(\"2 USB Stick\");\r\n        System.out.println();\r\n\r\n        int selection ;\r\n        System.out.println(\"What is your selection?\");\r\n        selection = scan.nextInt();\r\n\r\n        if (selection == 1 ){\r\n            singleton.openSmartCardToken(); //Singletondan aldığımız  smart card objeyi çağırıyoruz\r\n\r\n        }\r\n        else if (selection == 2){\r\n            singleton.openUsbStickToken(); //Singletondan aldığımız usb stick objeyi çağırıyoruz\r\n\r\n        }\r\n        else\r\n            System.out.println(\"You entered an invalid value\");\r\n\r\n\r\n\r\n\r\n//        singleton.openUsbStickToken();\r\n//        Open usbStick = new Access();\r\n//        usbStick.openUsbStickToken();\r\n//\r\n//        System.out.println();\r\n//        System.out.println(\"***********************************\");\r\n//        System.out.println();\r\n//\r\n//        Open smartCard = new Access();\r\n//        smartCard.openSmartCardToken();\r\n\r\n\r\n\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Client.java b/src/Client.java
+--- a/src/Client.java	(revision d59e0575634db4105f929db67a101145b7725172)
++++ b/src/Client.java	(date 1623716054640)
+@@ -161,21 +161,19 @@
+ //    }
+ 
+ 
+-    public boolean verifyPIN() {
++    public void verifyPIN() {
+         if(1234 == 1234){
+             System.out.println("Your pin is verified ");
+-            return true ;
++
+         }else{
+             System.out.println("Your pin is rejected from system...");
+-            return  false ;
++
+         }
+     }
+     protected void selectFile() {
+-        if(verifyPIN())
+-            System.out.println("File is selected...");
+-        else{
+-            System.out.println("File couldn't select");
+-        }
++
++        System.out.println("File is selected...");
++
+     }
+     //    protected void encryptData() {
+ //
+@@ -218,9 +216,9 @@
+ class USBActions extends Template {
+ 
+     //  //  @Override
+-//    public void openFile() {
+-//        System.out.println("File is opened");
+-//    }
++    // public void openFile() {
++    //  System.out.println("File is opened");
++    // }
+ //    public boolean verifyPIN(){
+ //        hook();
+ //        return true ;
+@@ -265,6 +263,7 @@
+         usbStick.openFile();
+         sockets.add(usbStick);
+         usbStick.readingProcess();
++
+         usbStick.writingProcess();
+         usbStick.closeFile();
+ 
+@@ -275,6 +274,9 @@
+         smartCardActions.verifyPIN();
+         sockets.add(smartCard);
+         smartCard.readingProcess();
++        //
++        smartCard.cardInsertion();
++        smartCardActions.verifyPIN();
+         smartCard.writingProcess();
+     }
+ 
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"5b212a7d-5050-45f7-bfd2-59ed0ed8abf9\" name=\"Default Changelist\" comment=\"\" />\r\n    <ignored path=\"$PROJECT_DIR$/out/\" />\r\n    <option name=\"EXCLUDED_CONVERTED_TO_IGNORED\" value=\"true\" />\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileEditorManager\">\r\n    <leaf>\r\n      <file pinned=\"false\" current-in-tab=\"true\">\r\n        <entry file=\"file://$PROJECT_DIR$/src/Client.java\">\r\n          <provider selected=\"true\" editor-type-id=\"text-editor\">\r\n            <state relative-caret-position=\"159\">\r\n              <caret line=\"307\" column=\"44\" lean-forward=\"true\" selection-start-line=\"307\" selection-start-column=\"44\" selection-end-line=\"307\" selection-end-column=\"44\" />\r\n              <folding>\r\n                <element signature=\"imports\" expanded=\"true\" />\r\n              </folding>\r\n            </state>\r\n          </provider>\r\n        </entry>\r\n      </file>\r\n    </leaf>\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$/..\" />\r\n  </component>\r\n  <component name=\"IdeDocumentHistory\">\r\n    <option name=\"CHANGED_PATHS\">\r\n      <list>\r\n        <option value=\"$PROJECT_DIR$/src/Client.java\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectFrameBounds\" extendedState=\"6\">\r\n    <option name=\"x\" value=\"85\" />\r\n    <option name=\"y\" value=\"25\" />\r\n    <option name=\"width\" value=\"1750\" />\r\n    <option name=\"height\" value=\"980\" />\r\n  </component>\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\" />\r\n  <component name=\"ProjectView\">\r\n    <navigator proportions=\"\" version=\"1\">\r\n      <foldersAlwaysOnTop value=\"true\" />\r\n    </navigator>\r\n    <panes>\r\n      <pane id=\"ProjectPane\">\r\n        <subPane>\r\n          <expand>\r\n            <path>\r\n              <item name=\"SSOP5\" type=\"b2602c69:ProjectViewProjectNode\" />\r\n              <item name=\"SSOP5\" type=\"462c0819:PsiDirectoryNode\" />\r\n            </path>\r\n            <path>\r\n              <item name=\"SSOP5\" type=\"b2602c69:ProjectViewProjectNode\" />\r\n              <item name=\"SSOP5\" type=\"462c0819:PsiDirectoryNode\" />\r\n              <item name=\"src\" type=\"462c0819:PsiDirectoryNode\" />\r\n            </path>\r\n            <path>\r\n              <item name=\"SSOP5\" type=\"b2602c69:ProjectViewProjectNode\" />\r\n              <item name=\"SSOP5\" type=\"462c0819:PsiDirectoryNode\" />\r\n              <item name=\"src\" type=\"462c0819:PsiDirectoryNode\" />\r\n              <item name=\"Client.java\" type=\"529ef68f:ClassesTreeStructureProvider$PsiClassOwnerTreeNode\" />\r\n            </path>\r\n          </expand>\r\n          <select />\r\n        </subPane>\r\n      </pane>\r\n      <pane id=\"PackagesPane\" />\r\n      <pane id=\"Scope\" />\r\n    </panes>\r\n  </component>\r\n  <component name=\"PropertiesComponent\">\r\n    <property name=\"com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp\" value=\"1623713935321\" />\r\n    <property name=\"project.structure.last.edited\" value=\"Modules\" />\r\n    <property name=\"project.structure.proportion\" value=\"0.0\" />\r\n    <property name=\"project.structure.side.proportion\" value=\"0.0\" />\r\n  </component>\r\n  <component name=\"RunDashboard\">\r\n    <option name=\"ruleStates\">\r\n      <list>\r\n        <RuleState>\r\n          <option name=\"name\" value=\"ConfigurationTypeDashboardGroupingRule\" />\r\n        </RuleState>\r\n        <RuleState>\r\n          <option name=\"name\" value=\"StatusDashboardGroupingRule\" />\r\n        </RuleState>\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"RunManager\">\r\n    <configuration name=\"Client\" type=\"Application\" factoryName=\"Application\" temporary=\"true\" nameIsGenerated=\"true\">\r\n      <option name=\"MAIN_CLASS_NAME\" value=\"Client\" />\r\n      <module name=\"SSOP5\" />\r\n      <method v=\"2\">\r\n        <option name=\"Make\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <recent_temporary>\r\n      <list>\r\n        <item itemvalue=\"Application.Client\" />\r\n      </list>\r\n    </recent_temporary>\r\n  </component>\r\n  <component name=\"SvnConfiguration\">\r\n    <configuration />\r\n  </component>\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"5b212a7d-5050-45f7-bfd2-59ed0ed8abf9\" name=\"Default Changelist\" comment=\"\" />\r\n      <created>1623713537093</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1623713537093</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"jdhfskjksdjfh\">\r\n      <created>1623713613266</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1623713613266</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"2\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"ToolWindowManager\">\r\n    <frame x=\"-7\" y=\"-7\" width=\"1550\" height=\"838\" extended-state=\"6\" />\r\n    <editor active=\"true\" />\r\n    <layout>\r\n      <window_info id=\"Image Layers\" />\r\n      <window_info id=\"Designer\" />\r\n      <window_info id=\"UI Designer\" />\r\n      <window_info id=\"Capture Tool\" />\r\n      <window_info id=\"Favorites\" side_tool=\"true\" />\r\n      <window_info active=\"true\" content_ui=\"combo\" id=\"Project\" order=\"0\" visible=\"true\" weight=\"0.24966443\" />\r\n      <window_info id=\"Structure\" order=\"1\" side_tool=\"true\" weight=\"0.25\" />\r\n      <window_info anchor=\"bottom\" id=\"Version Control\" />\r\n      <window_info anchor=\"bottom\" id=\"Terminal\" visible=\"true\" weight=\"0.3286119\" />\r\n      <window_info anchor=\"bottom\" id=\"Event Log\" side_tool=\"true\" />\r\n      <window_info anchor=\"bottom\" id=\"Message\" order=\"0\" />\r\n      <window_info anchor=\"bottom\" id=\"Find\" order=\"1\" />\r\n      <window_info anchor=\"bottom\" id=\"Run\" order=\"2\" />\r\n      <window_info anchor=\"bottom\" id=\"Debug\" order=\"3\" weight=\"0.4\" />\r\n      <window_info anchor=\"bottom\" id=\"Cvs\" order=\"4\" weight=\"0.25\" />\r\n      <window_info anchor=\"bottom\" id=\"Inspection\" order=\"5\" weight=\"0.4\" />\r\n      <window_info anchor=\"bottom\" id=\"TODO\" order=\"6\" />\r\n      <window_info anchor=\"right\" id=\"Palette\" />\r\n      <window_info anchor=\"right\" id=\"Theme Preview\" />\r\n      <window_info anchor=\"right\" id=\"Maven\" />\r\n      <window_info anchor=\"right\" id=\"Capture Analysis\" />\r\n      <window_info anchor=\"right\" id=\"Palette&#9;\" />\r\n      <window_info anchor=\"right\" id=\"Commander\" internal_type=\"SLIDING\" order=\"0\" type=\"SLIDING\" weight=\"0.4\" />\r\n      <window_info anchor=\"right\" id=\"Ant Build\" order=\"1\" weight=\"0.25\" />\r\n      <window_info anchor=\"right\" content_ui=\"combo\" id=\"Hierarchy\" order=\"2\" weight=\"0.25\" />\r\n    </layout>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"jdhfskjksdjfh\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"jdhfskjksdjfh\" />\r\n  </component>\r\n  <component name=\"editorHistoryManager\">\r\n    <entry file=\"file://$PROJECT_DIR$/../SSOP_3/SE311 Project/src/Client.java\">\r\n      <provider selected=\"true\" editor-type-id=\"text-editor\">\r\n        <state relative-caret-position=\"340\">\r\n          <caret line=\"23\" column=\"9\" lean-forward=\"true\" selection-end-line=\"351\" />\r\n          <folding>\r\n            <element signature=\"imports\" expanded=\"true\" />\r\n          </folding>\r\n        </state>\r\n      </provider>\r\n    </entry>\r\n    <entry file=\"file://$PROJECT_DIR$/src/Client.java\">\r\n      <provider selected=\"true\" editor-type-id=\"text-editor\">\r\n        <state relative-caret-position=\"159\">\r\n          <caret line=\"307\" column=\"44\" lean-forward=\"true\" selection-start-line=\"307\" selection-start-column=\"44\" selection-end-line=\"307\" selection-end-column=\"44\" />\r\n          <folding>\r\n            <element signature=\"imports\" expanded=\"true\" />\r\n          </folding>\r\n        </state>\r\n      </provider>\r\n    </entry>\r\n  </component>\r\n  <component name=\"masterDetails\">\r\n    <states>\r\n      <state key=\"ArtifactsStructureConfigurable.UI\">\r\n        <settings>\r\n          <artifact-editor />\r\n          <splitter-proportions>\r\n            <option name=\"proportions\">\r\n              <list>\r\n                <option value=\"0.2\" />\r\n              </list>\r\n            </option>\r\n          </splitter-proportions>\r\n        </settings>\r\n      </state>\r\n      <state key=\"FacetStructureConfigurable.UI\">\r\n        <settings>\r\n          <last-edited>No facets are configured</last-edited>\r\n          <splitter-proportions>\r\n            <option name=\"proportions\">\r\n              <list>\r\n                <option value=\"0.2\" />\r\n              </list>\r\n            </option>\r\n          </splitter-proportions>\r\n        </settings>\r\n      </state>\r\n      <state key=\"GlobalLibrariesConfigurable.UI\">\r\n        <settings>\r\n          <splitter-proportions>\r\n            <option name=\"proportions\">\r\n              <list>\r\n                <option value=\"0.2\" />\r\n              </list>\r\n            </option>\r\n          </splitter-proportions>\r\n        </settings>\r\n      </state>\r\n      <state key=\"JdkListConfigurable.UI\">\r\n        <settings>\r\n          <last-edited>1.8</last-edited>\r\n          <splitter-proportions>\r\n            <option name=\"proportions\">\r\n              <list>\r\n                <option value=\"0.2\" />\r\n              </list>\r\n            </option>\r\n          </splitter-proportions>\r\n        </settings>\r\n      </state>\r\n      <state key=\"ModuleStructureConfigurable.UI\">\r\n        <settings>\r\n          <last-edited>SSOP5</last-edited>\r\n          <splitter-proportions>\r\n            <option name=\"proportions\">\r\n              <list>\r\n                <option value=\"0.2\" />\r\n                <option value=\"0.6\" />\r\n              </list>\r\n            </option>\r\n          </splitter-proportions>\r\n        </settings>\r\n      </state>\r\n      <state key=\"ProjectJDKs.UI\">\r\n        <settings>\r\n          <last-edited>1.8</last-edited>\r\n          <splitter-proportions>\r\n            <option name=\"proportions\">\r\n              <list>\r\n                <option value=\"0.2\" />\r\n              </list>\r\n            </option>\r\n          </splitter-proportions>\r\n        </settings>\r\n      </state>\r\n      <state key=\"ProjectLibrariesConfigurable.UI\">\r\n        <settings>\r\n          <splitter-proportions>\r\n            <option name=\"proportions\">\r\n              <list>\r\n                <option value=\"0.2\" />\r\n              </list>\r\n            </option>\r\n          </splitter-proportions>\r\n        </settings>\r\n      </state>\r\n    </states>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision d59e0575634db4105f929db67a101145b7725172)
++++ b/.idea/workspace.xml	(date 1623714984477)
+@@ -1,9 +1,11 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ChangeListManager">
+-    <list default="true" id="5b212a7d-5050-45f7-bfd2-59ed0ed8abf9" name="Default Changelist" comment="" />
+-    <ignored path="$PROJECT_DIR$/out/" />
+-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
++    <list default="true" id="5b212a7d-5050-45f7-bfd2-59ed0ed8abf9" name="Default Changelist" comment="">
++      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/src/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Client.java" afterDir="false" />
++    </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -33,7 +35,7 @@
+     </option>
+   </component>
+   <component name="Git.Settings">
+-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
++    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+   </component>
+   <component name="IdeDocumentHistory">
+     <option name="CHANGED_PATHS">
+@@ -48,6 +50,7 @@
+     <option name="width" value="1750" />
+     <option name="height" value="980" />
+   </component>
++  <component name="ProjectId" id="1txdErxAKpW2Z9s4VVPQdVNgsKA" />
+   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+   <component name="ProjectView">
+     <navigator proportions="" version="1">
+@@ -80,23 +83,19 @@
+       <pane id="Scope" />
+     </panes>
+   </component>
++  <component name="ProjectViewState">
++    <option name="hideEmptyMiddlePackages" value="true" />
++    <option name="showLibraryContents" value="true" />
++  </component>
+   <component name="PropertiesComponent">
++    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
++    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+     <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1623713935321" />
++    <property name="last_opened_file_path" value="$PROJECT_DIR$/../untitled1/src/Client.java" />
+     <property name="project.structure.last.edited" value="Modules" />
+     <property name="project.structure.proportion" value="0.0" />
+     <property name="project.structure.side.proportion" value="0.0" />
+-  </component>
+-  <component name="RunDashboard">
+-    <option name="ruleStates">
+-      <list>
+-        <RuleState>
+-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+-        </RuleState>
+-        <RuleState>
+-          <option name="name" value="StatusDashboardGroupingRule" />
+-        </RuleState>
+-      </list>
+-    </option>
++    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+   </component>
+   <component name="RunManager">
+     <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+@@ -112,6 +111,7 @@
+       </list>
+     </recent_temporary>
+   </component>
++  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+   <component name="SvnConfiguration">
+     <configuration />
+   </component>
+Index: .idea/vcs.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"VcsDirectoryMappings\">\r\n    <mapping directory=\"$PROJECT_DIR$/..\" vcs=\"Git\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/vcs.xml b/.idea/vcs.xml
+--- a/.idea/vcs.xml	(revision d59e0575634db4105f929db67a101145b7725172)
++++ b/.idea/vcs.xml	(date 1623714580614)
+@@ -2,5 +2,6 @@
+ <project version="4">
+   <component name="VcsDirectoryMappings">
+     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
++    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+   </component>
+ </project>
+\ No newline at end of file
