@@ -12,7 +12,7 @@ interface OS{
 }
 
 class USBStick implements OS {
-    buildAdapter adapter = new buildAdapter();
+    buildAdapter adapter1 = new buildAdapter();
     private boolean connector = false ; //connectionun bağlı veya değil olduğunu tespit için
     private USBActions usbActions ;
 
@@ -20,9 +20,10 @@ class USBStick implements OS {
         this.usbActions = usbActions;
     }
 
-    public void openFile(){
-        System.out.println("File has been opened");
-    }
+    // public void openFile(){
+
+    //  System.out.println("File has been opened");
+    //}
 
     public void closeFile() {
         System.out.println("File has been closed");
@@ -31,14 +32,14 @@ class USBStick implements OS {
     public void cardInsertion() {
         connector = true  ;
         AbstractAdapterFactory UsbToken = new UsbTokenAdapter("UsbToken is insterted");
-        adapter.createAdapter(UsbToken);
+        adapter1.createAdapter(UsbToken);
     }
 
     @Override
     public void writingProcess() {
         if(connector){
-            System.out.println("Data is writing...");
-            System.out.println("Your data is wrote on your USB Card");
+            System.out.println("Writing process is starting...");
+            //     System.out.println("Your data is wrote on your USB Card");
             usbActions.WriteActions();
         }else{
             System.out.println("Please connect your USB Stick");
@@ -48,8 +49,8 @@ class USBStick implements OS {
     @Override
     public void readingProcess() {
         if(connector){
-            System.out.println("Data is reading...");
-            System.out.println("Your data is read on your USB Card");
+            System.out.println("Reading Process is starting...");
+            System.out.println("Reading actions will be start");
             usbActions.ReadActions();
         }else{
             System.out.println("Please connect your USB Stick");
@@ -59,7 +60,7 @@ class USBStick implements OS {
 }
 class SmartCard {
     private final SmartCardActions smartCardActions ;
-
+    buildAdapter adapter2 = new buildAdapter();
     public SmartCard(SmartCardActions smartCardActions) {
         this.smartCardActions = smartCardActions;
     }
@@ -67,20 +68,20 @@ class SmartCard {
     private boolean connector = false ;
 
     public void cardInsertion() {
-        buildAdapter adapter = new buildAdapter();
+
         connector = true ;
         // System.out.println("Smart Card is connected");
         // System.out.println("------------------------");
         // System.out.println();
         AbstractAdapterFactory SmartCard = new SmartCardAdapter("SmartCard is inserted");
-        adapter.createAdapter(SmartCard);
+        adapter2.createAdapter(SmartCard);
     }
 
     public void smartCardWriting() {
         if(connector){
             System.out.println("Writing proces is working for Smart Card");
             System.out.println("---------------------------------");
-            System.out.println("Your data is wrote on your Smart Card");
+            //  System.out.println("Your data is wrote on your Smart Card");
             smartCardActions.WriteActions();
         }else {
             System.out.println("Please connect your smart card");
@@ -153,7 +154,7 @@ abstract class Template{
     protected  final void decryptData(){
         System.out.println("Decrypting...");
     }
-    protected  abstract void closeFile();
+//    protected  abstract void closeFile();
 
 }
 
@@ -200,7 +201,10 @@ class SmartCardActions extends Template {
     }
 
     protected void writeData(){
-        System.out.println("Data is writing***");
+        System.out.println("Data is writing to the card***");
+        System.out.println("************");
+        System.out.println("Data has written.");
+        System.out.println("****************\n\n");
     }
 
 
@@ -214,10 +218,10 @@ class SmartCardActions extends Template {
 ////        }
 //    }
 
-    @Override
-    protected void closeFile() {
+    //   @Override
+    //   protected void closeFile() {
 //        hook();
-    }
+    //   }
 
 //    protected void hook(){
 //        //Boş dönmesi için
@@ -236,16 +240,16 @@ class USBActions extends Template {
 //        return true ;
 //    }
     protected void selectFile() {
-        System.out.println("File is selected...");
+        System.out.println("File is oppening...");
     }
     //    protected void encryptData() {
 //        System.out.println("Data is encrypted");
 //    }
     protected void readData() {
-        hook();
+        System.out.println("Data is reading");
     }
     protected void writeData(){
-        hook();
+        System.out.println("Data is writing to the card***");
     }
     //    protected void decryptData() {
 //        System.out.println("Decrypting...");
@@ -258,12 +262,14 @@ class USBActions extends Template {
 
 }
 class Access implements Open{
+
+    static ArrayList<buildAdapter> adapters = new ArrayList<>(4);
+
     Scanner scanner = new Scanner(System.in);
 
     // Hem usb hem de smart cardın çalıştırıldığı yer
-
-
     public Access() {
+
 
         usbActions = new USBActions();
         usbStick = new USBStick(usbActions);
@@ -274,13 +280,15 @@ class Access implements Open{
     }
     @Override
     public void openUsbStickToken() {
+        adapters.add(usbStick.adapter1);
+        System.out.println(adapters.size()+" port is using. "+(4-adapters.size())+" port is left.");
+        //sockets.add(usbStick);
         System.out.println("If you want to use token press 1 or add new information press 2");
         int a = scanner.nextInt();
         if(a==1){
             usbStick.cardInsertion();
-            usbStick.openFile();
-            sockets.add(usbStick);
             usbStick.readingProcess();
+            usbStick.closeFile();
         }
         else if(a==2){
             usbStick.cardInsertion();
@@ -292,13 +300,22 @@ class Access implements Open{
     }
     @Override
     public void openSmartCardToken() {
+        adapters.add(smartCARD.adapter2);
+        System.out.println(adapters.size()+" port is using. "+(4-adapters.size())+" port is left.");
+        //sockets.add(smartCard);
+        System.out.println("If you want to use token press 1 or add new information press 2");
+        int a = scanner.nextInt();
+        if(a==1) {
+            smartCard.cardInsertion();
+            smartCardActions.verifyPIN();
+            smartCard.readingProcess();
+        }
 
-
-        smartCard.cardInsertion();
-        smartCardActions.verifyPIN();
-        sockets.add(smartCard);
-        smartCard.readingProcess();
-        smartCard.writingProcess();
+        else if(a==2) {
+            smartCard.cardInsertion();
+            smartCardActions.verifyPIN();
+            smartCard.writingProcess();
+        }
     }
 
 
@@ -365,7 +382,7 @@ class buildAdapter{
 
 
 public class Client {
-    public static void main(String [] args){
+    public static void main(String [] args) {
 
         // AbstractAdapterFactory SmartCard = new SmartCardAdapter("SmartCard is inserted");
 
@@ -375,28 +392,33 @@ public class Client {
 
 
         Scanner scan = new Scanner(System.in); //Scanner for user input
+        while (true) {
+            System.out.println("Please choose your insertion");
+            System.out.println("1 Smart Card");
+            System.out.println("2 USB Stick");
+            System.out.println("Press 3 to quit");
+            System.out.println();
 
-        System.out.println("Please choose your insertion");
-        System.out.println("1 Smart Card");
-        System.out.println("2 USB Stick");
-        System.out.println();
+            int selection;
+            System.out.println("What is your selection?");
+            selection = scan.nextInt();
 
-        int selection ;
-        System.out.println("What is your selection?");
-        selection = scan.nextInt();
+            if (selection == 1) {
+                singleton.openSmartCardToken(); //Singletondan aldığımız  smart card objeyi çağırıyoruz
 
-        if (selection == 1 ){
-            singleton.openSmartCardToken(); //Singletondan aldığımız  smart card objeyi çağırıyoruz
+            } else if (selection == 2) {
+                singleton.openUsbStickToken(); //Singletondan aldığımız usb stick objeyi çağırıyoruz
 
-        }
-        else if (selection == 2){
-            singleton.openUsbStickToken(); //Singletondan aldığımız usb stick objeyi çağırıyoruz
+            }
+            else if(selection == 3)
+                break;
+            else if (Access.adapters.size()==4){
+                System.out.println("You are using all of ports on the computer");
+                break;
+            }
 
-        }
-        else
-            System.out.println("You entered an invalid value");
-
-
+            else
+                System.out.println("You entered an invalid value");
 
 
 //        singleton.openUsbStickToken();
@@ -412,10 +434,11 @@ public class Client {
 
 
 //asdasdasdasdasdas
-        //COMMİT TEST
+            //COMMİT TEST
+        }
+        // commit test2
+        //commit test3
     }
-    // commit test2
-
 
 
 }
