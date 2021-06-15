@@ -232,29 +232,18 @@ class SmartCardActions extends Template {
 
 class USBActions extends Template {
 
-    //  //  @Override
-//    public void openFile() {
-//        System.out.println("File is opened");
-//    }
-//    public boolean verifyPIN(){
-//        hook();
-//        return true ;
-//    }
+
     protected void selectFile() {
         System.out.println("File is oppening...");
     }
-    //    protected void encryptData() {
-//        System.out.println("Data is encrypted");
-//    }
+
     protected void readData() {
         System.out.println("Data is reading");
     }
     protected void writeData(){
         System.out.println("Data is writing to the card***");
     }
-    //    protected void decryptData() {
-//        System.out.println("Decrypting...");
-//    }
+
     protected void closeFile() {
         System.out.println("File is closed");
     }
@@ -268,7 +257,6 @@ class Access implements Open{
 
     Scanner scanner = new Scanner(System.in);
 
-    // Hem usb hem de smart cardın çalıştırıldığı yer
     public Access() {
 
 
@@ -283,7 +271,6 @@ class Access implements Open{
     public void openUsbStickToken() {
 
 
-        //sockets.add(usbStick);
         System.out.println("If you want to use token press 1 or add new information press 2");
         int a = scanner.nextInt();
         if(a==1){
@@ -388,9 +375,6 @@ class buildReader{
 public class Client {
     public static void main(String [] args) {
 
-        // AbstractAdapterFactory SmartCard = new SmartCardAdapter("SmartCard is inserted");
-
-        //adapter.createAdapter(SmartCard);
 
         Singleton singleton = Singleton.getInstance();
 
@@ -428,24 +412,6 @@ public class Client {
                 System.out.println("You entered an invalid value");
 
 
-//        singleton.openUsbStickToken();
-//        Open usbStick = new Access();
-//        usbStick.openUsbStickToken();
-//
-//        System.out.println();
-//        System.out.println("***********************************");
-//        System.out.println();
-//
-//        Open smartCard = new Access();
-//        smartCard.openSmartCardToken();
-
-
-//asdasdasdasdasdas
-            //COMMİT TEST
         }
-        // commit test4
-
-    }
-
-
-}
+      }
+      }
