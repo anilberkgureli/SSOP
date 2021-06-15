@@ -357,6 +357,7 @@ public class Client {
 //        smartCard.openSmartCardToken();
 
 
-//asdasdasdasdasdasd
+//asdasdasdasdasdas
+        //COMMİT TEST
     }
 }
