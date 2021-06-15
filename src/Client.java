@@ -19,10 +19,6 @@ class USBStick implements OS {
         this.usbActions = usbActions;
     }
 
-    // public void openFile(){
-
-    //  System.out.println("File has been opened");
-    //}
 
     public void closeFile() {
         System.out.println("File has been closed");
