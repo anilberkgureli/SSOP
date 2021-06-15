@@ -12,10 +12,9 @@ interface OS{
 }
 
 class USBStick implements OS {
-    buildAdapter adapter1 = new buildAdapter();
+    buildReader adapter1 = new buildReader();
     private boolean connector = false ; //connectionun bağlı veya değil olduğunu tespit için
     private USBActions usbActions ;
-
     public USBStick(USBActions usbActions) {
         this.usbActions = usbActions;
     }
@@ -31,8 +30,9 @@ class USBStick implements OS {
     @Override
     public void cardInsertion() {
         connector = true  ;
-        AbstractAdapterFactory UsbToken = new UsbTokenAdapter("UsbToken is insterted");
-        adapter1.createAdapter(UsbToken);
+        AbstractReaderFactory UsbToken = new UsbTokenReader("UsbToken is insterted");
+        adapter1.createReader(UsbToken);
+        System.out.println("Using port number is "+ buildReader.x.size());
     }
 
     @Override
@@ -60,7 +60,7 @@ class USBStick implements OS {
 }
 class SmartCard {
     private final SmartCardActions smartCardActions ;
-    buildAdapter adapter2 = new buildAdapter();
+    buildReader adapter2 = new buildReader();
     public SmartCard(SmartCardActions smartCardActions) {
         this.smartCardActions = smartCardActions;
     }
@@ -73,8 +73,9 @@ class SmartCard {
         // System.out.println("Smart Card is connected");
         // System.out.println("------------------------");
         // System.out.println();
-        AbstractAdapterFactory SmartCard = new SmartCardAdapter("SmartCard is inserted");
-        adapter2.createAdapter(SmartCard);
+        AbstractReaderFactory SmartCard = new SmartCardReader("SmartCard is inserted");
+        adapter2.createReader(SmartCard);
+        System.out.println("Using port number is "+ buildReader.x.size());
     }
 
     public void smartCardWriting() {
@@ -263,7 +264,7 @@ class USBActions extends Template {
 }
 class Access implements Open{
 
-    static ArrayList<buildAdapter> adapters = new ArrayList<>(4);
+
 
     Scanner scanner = new Scanner(System.in);
 
@@ -280,8 +281,8 @@ class Access implements Open{
     }
     @Override
     public void openUsbStickToken() {
-        adapters.add(usbStick.adapter1);
-        System.out.println(adapters.size()+" port is using. "+(4-adapters.size())+" port is left.");
+
+
         //sockets.add(usbStick);
         System.out.println("If you want to use token press 1 or add new information press 2");
         int a = scanner.nextInt();
@@ -300,8 +301,7 @@ class Access implements Open{
     }
     @Override
     public void openSmartCardToken() {
-        adapters.add(smartCARD.adapter2);
-        System.out.println(adapters.size()+" port is using. "+(4-adapters.size())+" port is left.");
+
         //sockets.add(smartCard);
         System.out.println("If you want to use token press 1 or add new information press 2");
         int a = scanner.nextInt();
@@ -342,39 +342,43 @@ class Singleton extends Access{
         return instance;
     }
 }
-abstract  class AbstractAdapterFactory{
+abstract  class AbstractReaderFactory{
     abstract String cardInsertion();
 
 }
-class SmartCardAdapter extends AbstractAdapterFactory{
+class SmartCardReader extends AbstractReaderFactory{
     String a;
     @Override
     String cardInsertion() {
         return a;
     }
-    public SmartCardAdapter(String instertion){
+    public SmartCardReader(String instertion){
         a = instertion;
 
 
     }
 }
-class UsbTokenAdapter extends AbstractAdapterFactory{
+class UsbTokenReader extends AbstractReaderFactory{
     String a;
     @Override
     String cardInsertion() {
         return a;
     }
-    public UsbTokenAdapter(String instertion){
+    public UsbTokenReader(String instertion){
         a = instertion;
 
 
     }
 }
-class buildAdapter{
-    public void createAdapter(AbstractAdapterFactory adapterFactory){
-        ArrayList<AbstractAdapterFactory> x = new ArrayList<>(4);
-        x.add(adapterFactory);
+class buildReader{
+    static int counter=0;
+    static ArrayList<AbstractReaderFactory> x = new ArrayList<AbstractReaderFactory>(4);
+    public void createReader(AbstractReaderFactory adapterFactory){
+
+        x.add(counter,adapterFactory);
+        counter++;
         System.out.println(adapterFactory.cardInsertion());
+
 
     }
 }
@@ -393,6 +397,7 @@ public class Client {
 
         Scanner scan = new Scanner(System.in); //Scanner for user input
         while (true) {
+            System.out.println("Size is "+buildReader.counter);
             System.out.println("Please choose your insertion");
             System.out.println("1 Smart Card");
             System.out.println("2 USB Stick");
@@ -402,20 +407,22 @@ public class Client {
             int selection;
             System.out.println("What is your selection?");
             selection = scan.nextInt();
-
+            if (buildReader.x.size()>3){
+                System.out.println("You are using all of ports on the computer");
+                break;
+            }
             if (selection == 1) {
                 singleton.openSmartCardToken(); //Singletondan aldığımız  smart card objeyi çağırıyoruz
 
-            } else if (selection == 2) {
+            }
+
+            else if (selection == 2) {
                 singleton.openUsbStickToken(); //Singletondan aldığımız usb stick objeyi çağırıyoruz
 
             }
             else if(selection == 3)
                 break;
-            else if (Access.adapters.size()==4){
-                System.out.println("You are using all of ports on the computer");
-                break;
-            }
+
 
             else
                 System.out.println("You entered an invalid value");
@@ -436,8 +443,8 @@ public class Client {
 //asdasdasdasdasdas
             //COMMİT TEST
         }
-        // commit test2
-        //commit test3
+        // commit test4
+
     }
 
 
